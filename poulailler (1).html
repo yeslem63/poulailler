@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Poulailler"/>
+<title>Poulailler</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#FAFAF7;
+  --surface:#FFFFFF;
+  --surface2:#F3F1EB;
+  --surface3:#EAE7DF;
+  --green:#2A6E4F;
+  --green-l:#E4F2EC;
+  --green-d:#1B4D36;
+  --green-m:#3D9970;
+  --red:#B5341C;
+  --red-l:#FDECEA;
+  --amber:#9C5C0A;
+  --amber-l:#FDF0DC;
+  --gold:#C9940A;
+  --text:#18181A;
+  --text2:#5C5C60;
+  --text3:#9C9C9E;
+  --border:#E2DED6;
+  --border2:#D0CCBF;
+  --r:14px;--r-sm:10px;--r-lg:20px;
+  --sb:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);
+  --shadow:0 2px 12px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;height:-webkit-fill-available}
+
+/* HEADER */
+.header{
+  background:var(--green-d);
+  padding:14px 16px 12px;
+  padding-top:calc(14px + var(--st));
+}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.header h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700;letter-spacing:-0.3px}
+.header-badge{background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.9);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+.htabs{display:flex;gap:8px}
+.htab{
+  flex:1;padding:10px 6px;text-align:center;border-radius:var(--r-sm);
+  cursor:pointer;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);
+  border:1px solid rgba(255,255,255,0.15);
+  transition:all 0.2s;
+}
+.htab.active{background:#fff;color:var(--green-d);border-color:#fff}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px calc(82px + var(--sb))}
+
+/* BOTTOM NAV */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding-bottom:var(--sb);
+  box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:10px 0 8px;cursor:pointer;color:var(--text3);
+  font-size:10px;font-weight:500;gap:3px;border:none;background:none;
+}
+.nb.active{color:var(--green)}
+.ni{font-size:20px;line-height:1}
+
+/* CARDS */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:var(--shadow);
+}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.card-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.card-total{font-size:14px;font-weight:700;color:var(--green-d)}
+.card-total.red{color:var(--red)}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.metric{
+  background:var(--surface2);
+  border-radius:var(--r);
+  padding:12px 13px;
+  border:1px solid var(--border);
+}
+.mlabel{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:4px}
+.mval{font-size:22px;font-weight:700;letter-spacing:-0.5px;font-family:'Playfair Display',serif;color:var(--text)}
+.mval.green{color:var(--green-d)}
+.mval.red{color:var(--red)}
+.mval.amber{color:var(--amber)}
+.munit{font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;font-weight:500;margin-left:2px}
+
+/* FORM */
+.field{margin-bottom:11px}
+.field label{font-size:12px;color:var(--text2);font-weight:600;display:block;margin-bottom:5px;letter-spacing:0.2px}
+.field input,.field textarea{
+  width:100%;padding:13px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  font-size:15px;
+  font-family:'DM Sans',sans-serif;
+  background:var(--surface);
+  color:var(--text);
+  -webkit-appearance:none;
+  transition:border-color 0.2s;
+}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--green)}
+.field textarea{height:64px;resize:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BUTTONS - Large & elegant */
+.btn{
+  width:100%;padding:15px;
+  border-radius:var(--r);
+  border:none;
+  font-size:15px;font-weight:600;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+  margin-top:6px;
+  letter-spacing:0.1px;
+  transition:all 0.15s;
+}
+.btn:active{transform:scale(0.98)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:active{background:var(--green-d)}
+.btn-red{background:var(--red);color:#fff}
+.btn-outline{
+  background:transparent;color:var(--green);
+  border:1.5px solid var(--green);
+}
+.btn-ghost{
+  background:var(--surface2);
+  color:var(--text);
+  border:1.5px solid var(--border2);
+}
+.btn+.btn{margin-top:8px}
+.btn-icon{margin-right:6px}
+
+/* LOG ITEMS */
+.log{
+  padding:10px 12px;
+  background:var(--green-l);
+  border-left:3px solid var(--green-m);
+  border-radius:0 var(--r-sm) var(--r-sm) 0;
+  margin-bottom:7px;
+}
+.log.red{background:var(--red-l);border-color:var(--red)}
+.log.amber{background:var(--amber-l);border-color:var(--gold)}
+.log-date{font-size:11px;color:var(--text3);margin-bottom:3px;font-family:monospace;font-weight:500}
+.log-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.log-desc{font-size:14px;color:var(--text);flex:1;font-weight:500}
+.log-amt{font-size:14px;font-weight:700;color:var(--green-d);white-space:nowrap}
+.log-amt.red{color:var(--red)}
+.del{font-size:13px;color:var(--red);margin-left:8px;cursor:pointer;padding:3px 5px;flex-shrink:0;opacity:0.7}
+
+/* SEPARATORS */
+.sep{height:1px;background:var(--border);margin:13px 0}
+
+/* PROFIT DISPLAY */
+.profit-box{
+  background:linear-gradient(135deg,var(--green-d),var(--green));
+  border-radius:var(--r-lg);
+  padding:24px 20px;
+  text-align:center;
+  margin-bottom:12px;
+  box-shadow:0 4px 20px rgba(42,110,79,0.25);
+}
+.profit-box .lbl{font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px}
+.profit-box .amt{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;color:#fff;letter-spacing:-1px}
+.profit-box .unit{font-size:14px;color:rgba(255,255,255,0.7);margin-top:4px}
+.profit-box.neg{background:linear-gradient(135deg,#8B1A0A,var(--red))}
+
+/* TABLE */
+.tbl{width:100%;font-size:14px;border-collapse:collapse}
+.tbl td{padding:8px 0}
+.tbl td:last-child{text-align:right;font-weight:600}
+.tbl tr{border-bottom:1px solid var(--border)}
+.tbl tr:last-child{border-bottom:none}
+.tbl td:first-child{color:var(--text2)}
+
+/* MORT BAR */
+.mort-bar{height:10px;background:var(--surface3);border-radius:5px;overflow:hidden;margin-top:8px}
+.mort-fill{height:100%;background:var(--red);border-radius:5px;transition:width 0.5s ease}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green-d)}
+.badge-red{background:var(--red-l);color:var(--red)}
+.badge-amber{background:var(--amber-l);color:var(--amber)}
+
+/* EMPTY */
+.empty{text-align:center;padding:24px 0;color:var(--text3);font-size:14px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.sheet{
+  background:var(--surface);border-radius:24px 24px 0 0;
+  padding:22px 18px calc(22px + var(--sb));
+  width:100%;max-width:480px;
+}
+.sheet h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px}
+.sheet p{font-size:14px;color:var(--text2);margin-bottom:20px;line-height:1.6}
+.sheet-btns{display:flex;gap:10px}
+.sheet-btns button{
+  flex:1;padding:14px;border-radius:var(--r);
+  border:none;cursor:pointer;
+  font-size:15px;font-weight:600;
+  font-family:'DM Sans',sans-serif;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:calc(90px + var(--sb));left:50%;
+  transform:translateX(-50%);
+  background:var(--green-d);color:#fff;
+  padding:11px 22px;border-radius:22px;
+  font-size:14px;font-weight:600;z-index:500;
+  pointer-events:none;opacity:0;
+  transition:opacity 0.3s;white-space:nowrap;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* WORKER */
+.worker{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--green-l);display:flex;align-items:center;
+  justify-content:center;font-size:14px;font-weight:700;
+  color:var(--green-d);flex-shrink:0;
+  border:2px solid var(--green-m);
+}
+
+/* HIST */
+.hist-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:16px;
+  margin-bottom:12px;box-shadow:var(--shadow);
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="header-top">
+    <h1>🐔 Poulailler</h1>
+    <div class="header-badge" id="hdr-saison">Saison 1</div>
+  </div>
+  <div class="htabs">
+    <div class="htab active" onclick="selH('H1')">Hangar 1</div>
+    <div class="htab" onclick="selH('H2')">Hangar 2</div>
+    <div class="htab" onclick="selH('H3')">Hangar 3</div>
+  </div>
+</div>
+
+<div class="scroll" id="scroll"></div>
+
+<div class="bnav">
+  <button class="nb active" onclick="goPage('accueil',this)"><span class="ni">🏠</span>Accueil</button>
+  <button class="nb" onclick="goPage('hangar',this)"><span class="ni">📦</span>Hangar</button>
+  <button class="nb" onclick="goPage('ventes',this)"><span class="ni">💰</span>Ventes</button>
+  <button class="nb" onclick="goPage('benefice',this)"><span class="ni">📈</span>Bénéfice</button>
+  <button class="nb" onclick="goPage('historique',this)"><span class="ni">📋</span>Historique</button>
+  <button class="nb" onclick="goPage('equipe',this)"><span class="ni">👥</span>Équipe</button>
+</div>
+</div>
+
+<div class="overlay" id="modal-fin">
+  <div class="sheet">
+    <h3>Terminer la saison ?</h3>
+    <p>Toutes les données seront archivées dans l'historique. Une nouvelle saison démarrera automatiquement.</p>
+    <div class="sheet-btns">
+      <button onclick="closeFin()" style="background:var(--surface2);color:var(--text)">Annuler</button>
+      <button onclick="confirmerFin()" style="background:var(--red);color:#fff">Terminer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='poul_v6';
+let ST=load(), curH='H1', curPage='accueil';
+
+function load(){
+  try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s);}catch(e){}
+  return fresh();
+}
+function fresh(){
+  const s={hangars:{},hist:[],workers:[],acts:[]};
+  ['H1','H2','H3'].forEach(h=>{s.hangars[h]=freshH(h,1);});
+  return s;
+}
+function freshH(id,saison){
+  return{id,saison,statut:'actif',
+    reception:{date:'',nb:0},
+    mortalite:[],nourriture:[],gaz:[],
+    medicaments:[],autres:[],ventes:[]
+  };
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){}}
+function today(){return new Date().toISOString().split('T')[0];}
+function fmtD(d){if(!d)return'';const p=d.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:d;}
+function fmt(n){return Math.round(n||0).toLocaleString('fr-FR');}
+function sum(arr,f){return(arr||[]).reduce((a,b)=>a+(parseFloat(b[f])||0),0);}
+function totalDep(g){return sum(g.nourriture,'montant')+sum(g.gaz,'montant')+sum(g.medicaments,'montant')+sum(g.autres,'montant');}
+function totalMort(g){return sum(g.mortalite,'nb');}
+function act(msg,h){ST.acts.unshift({date:new Date().toLocaleDateString('fr-FR'),msg,h});if(ST.acts.length>60)ST.acts.pop();}
+
+function goPage(p,btn){
+  curPage=p;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('scroll').scrollTop=0;
+  render();
+}
+function selH(h){
+  curH=h;
+  document.querySelectorAll('.htab').forEach((t,i)=>{t.classList.toggle('active',['H1','H2','H3'][i]===h);});
+  updateHdr();render();
+}
+function updateHdr(){
+  const g=ST.hangars[curH];
+  document.getElementById('hdr-saison').textContent='Saison '+g.saison;
+}
+function render(){
+  updateHdr();
+  ({accueil:rAccueil,hangar:rHangar,ventes:rVentes,benefice:rBenefice,historique:rHistorique,equipe:rEquipe})[curPage]?.();
+}
+
+/* ===== ACCUEIL ===== */
+function rAccueil(){
+  let tp=0,tm=0,td=0,tv=0;
+  ['H1','H2','H3'].forEach(h=>{const g=ST.hangars[h];tp+=g.reception.nb||0;tm+=totalMort(g);td+=totalDep(g);tv+=sum(g.ventes,'montant');});
+  let hl='';
+  ['H1','H2','H3'].forEach(h=>{
+    const g=ST.hangars[h];const dep=totalDep(g);const ven=sum(g.ventes,'montant');const ben=ven-dep;
+    const mort=totalMort(g);const nb=g.reception.nb||0;const pct=nb>0?Math.round(mort/nb*100):0;
+    hl+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <span style="font-weight:700;font-size:16px;font-family:'Playfair Display',serif">${h}</span>
+          <span class="badge ${g.statut==='actif'?'badge-green':'badge-amber'}">${g.statut==='actif'?'Actif':'Fermé'}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${nb} poussins · mortalité ${pct}%</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:16px;font-weight:700;font-family:'Playfair Display',serif;color:${ben>=0?'var(--green-d)':'var(--red)'}">${ben>=0?'+':''}${fmt(ben)}</div>
+        <div style="font-size:11px;color:var(--text3)">MRU</div>
+      </div>
+    </div>`;
+  });
+  let al='';
+  (ST.acts||[]).slice(0,5).forEach(a=>{
+    al+=`<div class="log"><div class="log-date">${a.date} · ${a.h}</div><div class="log-desc">${a.msg}</div></div>`;
+  });
+  document.getElementById('scroll').innerHTML=`
+  <div class="metrics">
+    <div class="metric"><div class="mlabel">Total poussins</div><div class="mval">${fmt(tp)}</div></div>
+    <div class="metric"><div class="mlabel">Mortalité</div><div class="mval red">${fmt(tm)}</div></div>
+    <div class="metric"><div class="mlabel">Dépenses</div><div class="mval amber" style="font-size:16px">${fmt(td)}<span class="munit">MRU</span></div></div>
+    <div class="metric"><div class="mlabel">Ventes</div><div class="mval green" style="font-size:16px">${fmt(tv)}<span class="munit">MRU</span></div></div>
+  </div>
+  <div class="card"><div class="card-header"><span class="card-title">Résumé hangars</span></div>${hl}</div>
+  <div class="card"><div class="card-header"><span class="card-title">Activités récentes</span></div>${al||'<div class="empty">Aucune activité</div>'}</div>`;
+}
+
+/* ===== HANGAR ===== */
+function rHangar(){
+  const g=ST.hangars[curH];const closed=g.statut!=='actif';
+  const mort=totalMort(g);const nb=g.reception.nb||0;
+  const pct=nb>0?Math.min(100,Math.round(mort/nb*100)):0;
+  const pctColor=pct>10?'var(--red)':pct>5?'var(--amber)':'var(--green-d)';
+
+  let html=`
+  <div class="card">
+    <div class="card-header"><span class="card-title">🐣 Réception poussins</span></div>
+    ${!closed?`
+    <div class="row2">
+      <div class="field"><label>Date réception</label><input type="date" id="rec-date" value="${g.reception.date||today()}"/></div>
+      <div class="field"><label>Nombre poussins</label><input type="number" id="rec-nb" value="${nb||''}" placeholder="0" inputmode="numeric"/></div>
+    </div>
+    <button class="btn btn-green" onclick="saveReception()"><span class="btn-icon">💾</span>Enregistrer</button>`
+    :`<div style="display:flex;gap:12px;font-size:14px"><span style="color:var(--text3)">${fmtD(g.reception.date)||'—'}</span><span style="font-weight:700">${nb} poussins</span></div>`}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">💀 Mortalité</span><span class="card-total red">${fmt(mort)} têtes</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span style="font-size:13px;color:var(--text3)">Taux de mortalité</span>
+      <span style="font-size:20px;font-weight:700;font-family:'Playfair Display',serif;color:${pctColor}">${pct}%</span>
+    </div>
+    <div class="mort-bar"><div class="mort-fill" style="width:${pct}%;background:${pctColor}"></div></div>
+    ${!closed?`
+    <div class="sep"></div>
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="m-date" value="${today()}"/></div>
+      <div class="field"><label>Nombre morts</label><input type="number" id="m-nb" placeholder="0" inputmode="numeric"/></div>
+    </div>
+    <div class="field"><label>Note / cause</label><input type="text" id="m-note" placeholder="Observation optionnelle..."/></div>
+    <button class="btn btn-outline" onclick="addMort()"><span class="btn-icon">+</span>Ajouter mortalité</button>`:''}
+    <div style="margin-top:${!closed?'10px':'0'}">${rLogMort(g.mortalite,closed)}</div>
+  </div>
+
+  ${rSection('🌾 Nourriture',sum(g.nourriture,'montant'),closed,`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="n-date" value="${today()}"/></div>
+      <div class="field"><label>Quantité (sacs)</label><input type="number" id="n-qty" placeholder="0" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Montant (MRU)</label><input type="number" id="n-mont" placeholder="0" inputmode="decimal"/></div>
+    <button class="btn btn-outline" onclick="addDep('nourriture','n')"><span class="btn-icon">+</span>Ajouter nourriture</button>`,
+    rLog(g.nourriture,'nourriture',closed))}
+
+  ${rSection('🔥 Gaz',sum(g.gaz,'montant'),closed,`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="gz-date" value="${today()}"/></div>
+      <div class="field"><label>Prix (MRU)</label><input type="number" id="gz-mont" placeholder="0" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Note</label><input type="text" id="gz-note" placeholder="ex: 1 bouteille gaz..."/></div>
+    <button class="btn btn-outline" onclick="addDep('gaz','gz')"><span class="btn-icon">+</span>Ajouter gaz</button>`,
+    rLog(g.gaz,'gaz',closed))}
+
+  ${rSection('💊 Médicaments',sum(g.medicaments,'montant'),closed,`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="md-date" value="${today()}"/></div>
+      <div class="field"><label>Montant (MRU)</label><input type="number" id="md-mont" placeholder="0" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Nom médicament</label><input type="text" id="md-note" placeholder="Nom du médicament..."/></div>
+    <button class="btn btn-outline" onclick="addDep('medicaments','md')"><span class="btn-icon">+</span>Ajouter médicament</button>`,
+    rLog(g.medicaments,'medicaments',closed))}
+
+  ${rSection('➕ Autres dépenses',sum(g.autres,'montant'),closed,`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="au-date" value="${today()}"/></div>
+      <div class="field"><label>Montant (MRU)</label><input type="number" id="au-mont" placeholder="0" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Nom de la dépense</label><input type="text" id="au-note" placeholder="ex: transport, réparation..."/></div>
+    <button class="btn btn-outline" onclick="addDep('autres','au')"><span class="btn-icon">+</span>Ajouter dépense</button>`,
+    rLog(g.autres,'autres',closed))}
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">💰 Ventes</span><span class="card-total">${fmt(sum(g.ventes,'montant'))} MRU</span></div>
+    ${!closed?`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="vh-date" value="${today()}"/></div>
+      <div class="field"><label>Nb poulets vendus</label><input type="number" id="vh-nb" placeholder="0" inputmode="numeric" oninput="calcVH()"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Prix par poulet (MRU)</label><input type="number" id="vh-pu" placeholder="0" inputmode="decimal" oninput="calcVH()"/></div>
+      <div class="field"><label>Total (MRU)</label><input type="number" id="vh-total" placeholder="Calculé auto" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Acheteur</label><input type="text" id="vh-ach" placeholder="Nom acheteur (optionnel)..."/></div>
+    <button class="btn btn-green" onclick="addVenteH()"><span class="btn-icon">💰</span>Enregistrer la vente</button>`:''}
+    <div style="margin-top:${!closed?'10px':'0'}">${rVenteLog(g.ventes,closed)}</div>
+  </div>
+
+  ${!closed
+    ?`<button class="btn btn-red" onclick="openFin('${curH}')" style="margin-top:4px"><span class="btn-icon">🔚</span>Terminer la saison ${g.saison}</button>`
+    :`<div class="card" style="text-align:center;color:var(--text3);font-size:14px;padding:22px">Saison ${g.saison} archivée — lecture seule</div>`}`;
+
+  document.getElementById('scroll').innerHTML=html;
+}
+
+function rSection(title,total,closed,form,logs){
+  return `<div class="card">
+    <div class="card-header"><span class="card-title">${title}</span><span class="card-total">${fmt(total)} MRU</span></div>
+    ${!closed?form:''}
+    ${!closed?'<div style="margin-top:10px">':'<div>'}${logs}</div>
+  </div>`;
+}
+
+function rLogMort(arr,ro){
+  if(!arr||!arr.length)return'<div class="empty">Aucune entrée</div>';
+  return arr.slice().reverse().map((item,ri)=>{
+    const i=arr.length-1-ri;
+    const del=ro?'':` <span class="del" onclick="delMort(${i})">✕</span>`;
+    return `<div class="log red"><div class="log-date">${fmtD(item.date)||''}</div>
+    <div class="log-row"><span class="log-desc">${item.note||'Mortalité'}</span>
+    <span style="display:flex;align-items:center"><span class="log-amt red">${item.nb} têtes</span>${del}</span></div></div>`;
+  }).join('');
+}
+function rLog(arr,key,ro){
+  if(!arr||!arr.length)return'<div class="empty">Aucune entrée</div>';
+  return arr.slice().reverse().map((item,ri)=>{
+    const i=arr.length-1-ri;
+    const del=ro?'':` <span class="del" onclick="delItem('${key}',${i})">✕</span>`;
+    const qty=item.qty?` · ${item.qty} sacs`:'';
+    return `<div class="log"><div class="log-date">${fmtD(item.date)||''}${qty}</div>
+    <div class="log-row"><span class="log-desc">${item.note||'—'}</span>
+    <span style="display:flex;align-items:center"><span class="log-amt">${fmt(item.montant)} MRU</span>${del}</span></div></div>`;
+  }).join('');
+}
+
+function saveReception(){
+  const g=ST.hangars[curH];
+  const nb=parseInt(document.getElementById('rec-nb').value)||0;
+  const date=document.getElementById('rec-date').value||today();
+  g.reception={date,nb};act(`Réception: ${nb} poussins`,curH);save();rHangar();toast('✓ Enregistré');
+}
+function addMort(){
+  const g=ST.hangars[curH];
+  const nb=parseInt(document.getElementById('m-nb').value)||0;
+  if(!nb){toast('Nombre requis');return;}
+  g.mortalite.push({date:document.getElementById('m-date').value||today(),nb,note:document.getElementById('m-note').value||''});
+  act(`Mortalité: +${nb} têtes`,curH);save();rHangar();
+}
+function addDep(key,pfx){
+  const g=ST.hangars[curH];
+  const mont=parseFloat(document.getElementById(pfx+'-mont').value)||0;
+  if(!mont){toast('Montant requis');return;}
+  const note=document.getElementById(pfx+'-note')?.value||'';
+  const qty=document.getElementById(pfx+'-qty')?.value||null;
+  g[key].push({date:document.getElementById(pfx+'-date')?.value||today(),montant:mont,note,qty});
+  act(`${key}: ${fmt(mont)} MRU${note?' — '+note:''}`,curH);save();rHangar();
+}
+function delMort(i){if(!confirm('Supprimer?'))return;ST.hangars[curH].mortalite.splice(i,1);save();rHangar();}
+function delItem(key,i){if(!confirm('Supprimer?'))return;ST.hangars[curH][key].splice(i,1);save();rHangar();}
+function calcVH(){
+  const nb=parseFloat(document.getElementById('vh-nb')?.value)||0;
+  const pu=parseFloat(document.getElementById('vh-pu')?.value)||0;
+  if(nb&&pu){const t=document.getElementById('vh-total');if(t)t.value=Math.round(nb*pu);}
+}
+function addVenteH(){
+  const g=ST.hangars[curH];
+  const nb=parseFloat(document.getElementById('vh-nb').value)||0;
+  const pu=parseFloat(document.getElementById('vh-pu').value)||0;
+  let mont=parseFloat(document.getElementById('vh-total').value)||0;
+  if(!mont&&nb&&pu)mont=nb*pu;
+  if(!mont){toast('Montant requis');return;}
+  g.ventes.push({date:document.getElementById('vh-date').value||today(),nb,pu,montant:mont,acheteur:document.getElementById('vh-ach').value||''});
+  act(`Vente: ${nb} poulets @ ${pu} MRU → ${fmt(mont)} MRU`,curH);
+  save();rHangar();toast('✓ Vente enregistrée');
+}
+function rVenteLog(arr,ro){
+  if(!arr||!arr.length)return'<div class="empty">Aucune vente enregistrée</div>';
+  return arr.slice().reverse().map((v,ri)=>{
+    const i=arr.length-1-ri;
+    const del=ro?'':` <span class="del" onclick="delVenteH(${i})">✕</span>`;
+    return `<div class="log"><div class="log-date">${fmtD(v.date)||''}${v.acheteur?' · '+v.acheteur:''}</div>
+    <div class="log-row"><span class="log-desc">${v.nb||0} poulets @ ${v.pu||0} MRU</span>
+    <span style="display:flex;align-items:center"><span class="log-amt">${fmt(v.montant)} MRU</span>${del}</span></div></div>`;
+  }).join('');
+}
+function delVenteH(i){if(!confirm('Supprimer?'))return;ST.hangars[curH].ventes.splice(i,1);save();rHangar();}
+
+/* ===== VENTES ===== */
+function rVentes(){
+  const g=ST.hangars[curH];const closed=g.statut!=='actif';
+  const tv=sum(g.ventes,'montant');const tnb=sum(g.ventes,'nb');
+  let vl='';
+  if(!g.ventes||!g.ventes.length)vl='<div class="empty">Aucune vente enregistrée</div>';
+  else vl=(g.ventes||[]).slice().reverse().map((v,ri)=>{
+    const i=g.ventes.length-1-ri;
+    const del=closed?'':` <span class="del" onclick="delVente(${i})">✕</span>`;
+    return `<div class="log"><div class="log-date">${fmtD(v.date)||''}${v.acheteur?' · '+v.acheteur:''}</div>
+    <div class="log-row"><span class="log-desc">${v.nb||0} poulets @ ${v.pu||0} MRU</span>
+    <span style="display:flex;align-items:center"><span class="log-amt">${fmt(v.montant)} MRU</span>${del}</span></div></div>`;
+  }).join('');
+
+  document.getElementById('scroll').innerHTML=`
+  <div class="metrics">
+    <div class="metric"><div class="mlabel">Total vendu</div><div class="mval green" style="font-size:18px">${fmt(tv)}<span class="munit">MRU</span></div></div>
+    <div class="metric"><div class="mlabel">Poulets vendus</div><div class="mval">${fmt(tnb)}</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">💰 Nouvelle vente</span></div>
+    ${!closed?`
+    <div class="row2">
+      <div class="field"><label>Date</label><input type="date" id="v-date" value="${today()}"/></div>
+      <div class="field"><label>Nb poulets</label><input type="number" id="v-nb" placeholder="0" inputmode="numeric" oninput="calcV()"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Prix unitaire (MRU)</label><input type="number" id="v-pu" placeholder="0" inputmode="decimal" oninput="calcV()"/></div>
+      <div class="field"><label>Total (MRU)</label><input type="number" id="v-total" placeholder="Auto" inputmode="decimal"/></div>
+    </div>
+    <div class="field"><label>Acheteur</label><input type="text" id="v-ach" placeholder="Nom acheteur (optionnel)..."/></div>
+    <button class="btn btn-green" onclick="addVente()"><span class="btn-icon">💰</span>Enregistrer la vente</button>`
+    :`<div class="empty">Saison terminée</div>`}
+  </div>
+  <div class="card"><div class="card-header"><span class="card-title">Historique ventes</span></div>${vl}</div>`;
+}
+function calcV(){
+  const nb=parseFloat(document.getElementById('v-nb')?.value)||0;
+  const pu=parseFloat(document.getElementById('v-pu')?.value)||0;
+  if(nb&&pu){const t=document.getElementById('v-total');if(t)t.value=Math.round(nb*pu);}
+}
+function addVente(){
+  const g=ST.hangars[curH];
+  const nb=parseFloat(document.getElementById('v-nb').value)||0;
+  const pu=parseFloat(document.getElementById('v-pu').value)||0;
+  let mont=parseFloat(document.getElementById('v-total').value)||0;
+  if(!mont&&nb&&pu)mont=nb*pu;
+  if(!mont){toast('Montant requis');return;}
+  g.ventes.push({date:document.getElementById('v-date').value||today(),nb,pu,montant:mont,acheteur:document.getElementById('v-ach').value||''});
+  act(`Vente: ${nb} poulets → ${fmt(mont)} MRU`,curH);save();rVentes();toast('✓ Vente enregistrée');
+}
+function delVente(i){if(!confirm('Supprimer?'))return;ST.hangars[curH].ventes.splice(i,1);save();rVentes();}
+
+/* ===== BENEFICE ===== */
+function rBenefice(){
+  const g=ST.hangars[curH];
+  const dep=totalDep(g);const ven=sum(g.ventes,'montant');const ben=ven-dep;
+  const mort=totalMort(g);const nb=g.reception.nb||0;
+  const pct=nb>0?Math.round(mort/nb*100):0;
+  document.getElementById('scroll').innerHTML=`
+  <div class="profit-box ${ben<0?'neg':''}">
+    <div class="lbl">Bénéfice net — ${curH} Saison ${g.saison}</div>
+    <div class="amt">${ben>=0?'+':''}${fmt(ben)}</div>
+    <div class="unit">MRU</div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Résumé financier</span></div>
+    <table class="tbl">
+      <tr><td style="color:var(--green-d)">💰 Ventes totales</td><td style="color:var(--green-d)">${fmt(ven)} MRU</td></tr>
+      <tr><td style="color:var(--red)">📉 Dépenses totales</td><td style="color:var(--red)">−${fmt(dep)} MRU</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Détail dépenses</span></div>
+    <table class="tbl">
+      <tr><td>🌾 Nourriture</td><td>${fmt(sum(g.nourriture,'montant'))} MRU</td></tr>
+      <tr><td>🔥 Gaz</td><td>${fmt(sum(g.gaz,'montant'))} MRU</td></tr>
+      <tr><td>💊 Médicaments</td><td>${fmt(sum(g.medicaments,'montant'))} MRU</td></tr>
+      <tr><td>➕ Autres dépenses</td><td>${fmt(sum(g.autres,'montant'))} MRU</td></tr>
+    </table>
+    ${g.autres&&g.autres.length?`<div class="sep"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Détail autres dépenses</div>`+
+    g.autres.map(a=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)">
+    <span style="color:var(--text2)">${a.note||'—'} <span style="color:var(--text3);font-size:11px">${fmtD(a.date)}</span></span>
+    <span style="font-weight:700">${fmt(a.montant)} MRU</span></div>`).join(''):''}
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Élevage</span></div>
+    <table class="tbl">
+      <tr><td>Poussins reçus</td><td>${nb}</td></tr>
+      <tr><td>Mortalité totale</td><td style="color:var(--red)">${mort} têtes (${pct}%)</td></tr>
+      <tr><td>Poulets vendus</td><td>${fmt(sum(g.ventes,'nb'))}</td></tr>
+      <tr><td>Coût / poulet</td><td>${nb>0?fmt(dep/nb):0} MRU</td></tr>
+      <tr><td>Revenu / poulet</td><td style="color:var(--green-d)">${nb>0?fmt(ven/nb):0} MRU</td></tr>
+    </table>
+  </div>`;
+}
+
+/* ===== HISTORIQUE ===== */
+function rHistorique(){
+  const hist=ST.hist||[];
+  let html='';
+  if(!hist.length)html='<div class="card"><div class="empty">Aucune saison terminée pour le moment</div></div>';
+  else hist.slice().reverse().forEach(s=>{
+    const dep=totalDep(s);const ven=sum(s.ventes,'montant');const ben=ven-dep;
+    const mort=totalMort(s);const nb=s.reception.nb||0;
+    const pct=nb>0?Math.round(mort/nb*100):0;
+    html+=`<div class="hist-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700">${s.id}</span>
+        <span class="badge badge-amber">Saison ${s.saison}</span>
+      </div>
+      <span style="font-size:12px;color:var(--text3);font-family:monospace">${s.dateFin||''}</span>
+    </div>
+    <div class="metrics" style="margin-bottom:10px">
+      <div class="metric"><div class="mlabel">Poussins</div><div class="mval" style="font-size:18px">${nb}</div></div>
+      <div class="metric"><div class="mlabel">Mortalité</div><div class="mval red" style="font-size:18px">${mort}<span class="munit">(${pct}%)</span></div></div>
+      <div class="metric"><div class="mlabel">Dépenses</div><div class="mval amber" style="font-size:14px">${fmt(dep)}<span class="munit">MRU</span></div></div>
+      <div class="metric"><div class="mlabel">Ventes</div><div class="mval green" style="font-size:14px">${fmt(ven)}<span class="munit">MRU</span></div></div>
+    </div>
+    <div style="text-align:center;background:${ben>=0?'var(--green-l)':'var(--red-l)'};border-radius:var(--r-sm);padding:12px">
+      <span style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:${ben>=0?'var(--green-d)':'var(--red)'}">${ben>=0?'+':''}${fmt(ben)} MRU</span>
+    </div>
+    </div>`;
+  });
+  document.getElementById('scroll').innerHTML=html;
+}
+
+/* ===== EQUIPE ===== */
+function rEquipe(){
+  const workers=ST.workers||[];
+  let whtml='';
+  if(!workers.length)whtml='<div class="empty">Aucun travailleur ajouté</div>';
+  else workers.forEach((w,i)=>{
+    const init=w.name.split(' ').map(x=>x[0]||'').join('').toUpperCase().slice(0,2)||'?';
+    whtml+=`<div class="worker">
+    <div class="avatar">${init}</div>
+    <div style="flex:1"><div style="font-weight:700;font-size:15px">${w.name}</div><div style="font-size:13px;color:var(--text2);margin-top:1px">${w.role||'—'}</div></div>
+    <span class="del" style="font-size:16px" onclick="delWorker(${i})">✕</span></div>`;
+  });
+  document.getElementById('scroll').innerHTML=`
+  <div class="card"><div class="card-header"><span class="card-title">👥 Travailleurs (${workers.length})</span></div>${whtml}</div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Ajouter un travailleur</span></div>
+    <div class="field"><label>Nom complet</label><input type="text" id="w-name" placeholder="Prénom Nom"/></div>
+    <div class="field"><label>Rôle / Hangar assigné</label><input type="text" id="w-role" placeholder="ex: Responsable H1"/></div>
+    <button class="btn btn-green" onclick="addWorker()"><span class="btn-icon">+</span>Ajouter le travailleur</button>
+  </div>`;
+}
+function addWorker(){
+  const n=document.getElementById('w-name').value.trim();
+  const r=document.getElementById('w-role').value.trim();
+  if(!n){toast('Nom requis');return;}
+  ST.workers.push({name:n,role:r});save();rEquipe();toast('✓ Travailleur ajouté');
+}
+function delWorker(i){if(!confirm('Supprimer?'))return;ST.workers.splice(i,1);save();rEquipe();}
+
+/* ===== FIN SAISON ===== */
+let finTarget=null;
+function openFin(h){finTarget=h;document.getElementById('modal-fin').classList.add('show');}
+function closeFin(){document.getElementById('modal-fin').classList.remove('show');finTarget=null;}
+function confirmerFin(){
+  if(!finTarget)return;
+  const h=finTarget;
+  const g=JSON.parse(JSON.stringify(ST.hangars[h]));
+  g.dateFin=new Date().toLocaleDateString('fr-FR');
+  ST.hist.push(g);
+  act(`Saison ${g.saison} terminée ✓`,h);
+  ST.hangars[h]=freshH(h,g.saison+1);
+  closeFin();save();
+  toast(`🎉 Saison ${g.saison} archivée ! Saison ${g.saison+1} démarrée`);
+  render();
+}
+
+/* ===== TOAST ===== */
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},2800);
+}
+
+render();
+</script>
+</body>
+</html>
